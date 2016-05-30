@@ -8,7 +8,7 @@
   </head>
   <body>
     <nav>
-      <div class="nav-wrapper">
+      <div class="nav-wrapper amber darken-4">
         <a href="#" class="brand-logo center">Crypto-Currency Market Capitalizations</a>
         <ul id="nav-mobile" class="left hide-on-med-and-down">
           <li><a href="sass.html">Sass</a></li>
@@ -32,9 +32,11 @@
           <tbody>
           <tr ng-repeat="coin in coins">
             <td>{{coin.name}}</td>
-            <td>{{coin.market_cap_usd}}</td>
-            <td>{{coin.price_usd}}</td>
-            <td>{{coin.percent_change_24h}}</td>
+            <td>${{coin.market_cap_usd}}</td>
+            <td>${{coin.price_usd}}</td>
+            <td ng-if="coin.percent_change_24h >= 0" class="green-text">{{coin.percent_change_24h}}%</td>
+            <td ng-if="coin.percent_change_24h < 0" class="red-text">{{coin.percent_change_24h}}%</td>
+            <!-- <td ng-if="coin.percent_change_24h = null" class="">0</td> -->
           </tr>
             <!-- <tr>
               <td><a href="https://coinmarketcap.com/currencies/bitcoin/" target="_blank">Bitcoin</a></td>
