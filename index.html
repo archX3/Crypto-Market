@@ -12,13 +12,13 @@
   </head>
   <body ng-app="cryptomarket" >
     <header>
-      <div ng-controller="AppCtrl" ng-cloak>
+      <div ng-controller="AppCtrl as demo" ng-cloak>
         <md-content>
           <md-toolbar>
             <div class="md-toolbar-tools">
-              <md-button aria-label="Github">
+              <!-- <md-button aria-label="Github" id="openRepo">
                Github
-              </md-button>
+              </md-button> -->
               <h2 class="md-title">
                 <span>Crypto-Currency Market Capitalizations</span>
               </h2>
@@ -26,15 +26,78 @@
              <!--  <md-button class="md-raised" aria-label="Learn More">
                 Learn More
               </md-button> -->
-              <md-button class="md-fab md-mini" aria-label="Favorite">
+              <!-- <div class="lock-size" layout="row" layout-align="center center"> -->
+                <md-fab-speed-dial md-open="demo.isOpen" md-direction="left"
+                         ng-class="demo.selectedMode">
+                  <md-fab-trigger>
+                    <md-button aria-label="menu" class="md-fab md-mini">
+                      <md-icon md-svg-src="img/icons/favorite.svg"></md-icon>
+                    </md-button>
+                  </md-fab-trigger>
+                  <md-fab-actions>
+                    <md-button aria-label="Bitcoin" class="md-fab md-raised md-mini" ng-click="showAdvanced($event)">
+                      <md-icon md-svg-src="img/icons/Bitcoin.svg" aria-label="Bitcoin"></md-icon>
+                    </md-button>
+                   <!--  <md-button aria-label="Facebook" class="md-fab md-raised md-mini">
+                      <md-icon md-svg-src="img/icons/facebook.svg" aria-label="Facebook"></md-icon>
+                    </md-button>
+                    <md-button aria-label="Google Hangout" class="md-fab md-raised md-mini">
+                      <md-icon md-svg-src="img/icons/hangout.svg" aria-label="Google Hangout"></md-icon>
+                    </md-button> -->
+                  </md-fab-actions>
+                </md-fab-speed-dial>
+              <!-- </div> -->
+              <!-- <md-button class="md-fab md-mini" aria-label="Favorite">
                 <md-icon md-svg-icon="img/icons/favorite.svg"></md-icon>
-              </md-button>
+              </md-button> -->
             </div>
           </md-toolbar>
         </md-content>
       </div>
     </header>
-      <div class="row">
+    <script type="text/ng-template" id="dialog1.tmpl.html">
+      <md-dialog aria-label="Mango (Fruit)"  ng-cloak>
+        <md-toolbar>
+          <div class="md-toolbar-tools">
+            <h2>Apoya al proyecto</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="cancel()">
+              <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+            </md-button>
+          </div>
+        </md-toolbar>
+        <md-dialog-content>
+          <div class="md-dialog-content">
+            <h5>Si te gusto el proyecto puedes apoyarlo :)</h5>
+            <div style="overflow: hidden;" class="card">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img class="activator" src="img/qr.png">
+              </div>
+              <div class="card-content">
+                <span class="card-title activator grey-text text-darken-4">Bitcoin Addres</span>
+
+                <p>1Qcz52hznGuPzgnxLT47ZCVCy1CFfgb82</p>
+              </div>
+            </div>
+          </div>
+        </md-dialog-content>
+      </md-dialog>
+    </script>
+     <!--  <div class="row">
+        <div class="col s12 m7">
+          <div style="overflow: hidden;" class="card">
+            <div class="card-image waves-effect waves-block waves-light">
+              <img class="activator" src="img/qr.png">
+            </div>
+            <div class="card-content">
+              <span class="card-title activator grey-text text-darken-4">Bitcoin Addres</span>
+
+              <p>1Qcz52hznGuPzgnxLT47ZCVCy1CFfgb82</p>
+            </div>
+          </div>
+        </div>
+      </div> -->
+      <div class="row" id="popupContainer">
         <div ng-controller="MainCtrl" class="col s12">
           <table>
             <thead>
@@ -53,28 +116,11 @@
               <td>${{coin.price_usd}}</td>
               <td ng-if="coin.percent_change_24h >= 0" class="green-text">{{coin.percent_change_24h}}%</td>
               <td ng-if="coin.percent_change_24h < 0" class="red-text">{{coin.percent_change_24h}}%</td>
-              <!-- <td ng-if="coin.percent_change_24h = null" class="">0</td> -->
             </tr>
-              <!-- <tr>
-                <td><a href="https://coinmarketcap.com/currencies/bitcoin/" target="_blank">Bitcoin</a></td>
-                <td>Eclair</td>
-                <td>$0.87</td>
-              </tr>
-              <tr>
-                <td>Alan</td>
-                <td>Jellybean</td>
-                <td>$3.76</td>
-              </tr>
-              <tr>
-                <td>Jonathan</td>
-                <td>Lollipop</td>
-                <td>$7.00</td>
-              </tr> -->
             </tbody>
           </table>
         </div>
       </div>
-    <!-- <h1>Hello World!</h1> -->
   </body>
   <script src="node_modules/angular/angular.js"></script>
   <script src="node_modules/angular-aria/angular-aria.js"></script>
@@ -82,14 +128,57 @@
   <script src="node_modules/angular-material/angular-material.js"></script>
   <script>
     var app = angular.module( 'cryptomarket', [ 'ngMaterial' ] );
-        app.controller('AppCtrl', function($scope) {
+
+    app.controller('AppCtrl', function($scope, $mdDialog) {
+
+      $scope.showAdvanced = function(ev) {
+
+        $mdDialog.show({
+          controller: DialogController,
+          templateUrl: 'dialog1.tmpl.html',
+          parent: angular.element(document.body),
+          targetEvent: ev,
+          clickOutsideToClose:true,
+          fullscreen: false
+        })
+        .then(function(answer) {
+          $scope.status = 'You said the information was "' + answer + '".';
+        }, function() {
+          $scope.status = 'You cancelled the dialog.';
         });
-        app.controller('MainCtrl', function($scope, $http) {
-          $http.get("https://api.coinmarketcap.com/v1/ticker/")
-          .then(function (response) {
-            $scope.coins = response.data;
-          });
-        });
+      };
+
+      this.topDirections = ['left', 'up'];
+      this.bottomDirections = ['down', 'right'];
+      this.isOpen = false;
+      this.availableModes = ['md-fling', 'md-scale'];
+      this.selectedMode = 'md-fling';
+      this.availableDirections = ['up', 'down', 'left', 'right'];
+      this.selectedDirection = 'up';
+    });
+
+    app.controller('MainCtrl', function($scope, $http) {
+
+      $http.get("https://api.coinmarketcap.com/v1/ticker/")
+      .then(function (response) {
+        $scope.coins = response.data;
+      });
+    });
+
+    function DialogController($scope, $mdDialog) {
+      $scope.hide = function() {
+        $mdDialog.hide();
+      };
+
+      $scope.cancel = function() {
+        $mdDialog.cancel();
+      };
+
+      // $scope.answer = function(answer) {
+      //   $mdDialog.hide(answer);
+      // };
+    }
+
   </script>
   <script>
     // You can also require other files to run in this process
